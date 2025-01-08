@@ -8,6 +8,17 @@ def lambda_handler(source_region, destination_region, credentials):
 
     session = boto3.Session()
 
+    # connect to s3
+    CLIENT_NAME = 's3'
+    s3 = session.client(CLIENT_NAME, region_name=source_region, aws_access_key_id=credentials['AccessKeyId'],
+                        aws_secret_access_key=credentials['SecretAccessKey'],
+                        aws_session_token=credentials['SessionToken'])
+    
+    # load a file from S3 into a variable
+    response = s3.get_object(Bucket="XXXXXXXXXXX", Key="some_file_path.txt")
+    file_content = response['Body'].read().decode('utf-8')
+    print(file_content)
+
     # Load Records into KINESIS
     CLIENT_NAME = 'kinesis'
     kinesis = session.client(CLIENT_NAME, region_name=source_region, aws_access_key_id=credentials,
